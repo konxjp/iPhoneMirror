@@ -8,6 +8,7 @@
     <system:String x:Key="LanguageChinese">简体中文</system:String>
     <system:String x:Key="LanguageTraditionalChineseHongKong">Traditional Chinese (Hong Kong)</system:String>
     <system:String x:Key="LanguageEnglish">English</system:String>
+    <system:String x:Key="LanguageJapanese">日本語</system:String>
     <system:String x:Key="LanguageToolTip">Interface language</system:String>
     <system:String x:Key="DriverManagerButton">Driver manager</system:String>
     <system:String x:Key="DriverManagerToolTip">Open the driver installation, repair, and removal tool</system:String>
@@ -906,6 +907,7 @@ Make sure the phone and computer are on the same local network and keep the devi
     <system:String x:Key="DeveloperLanguageSimplified">Simplified Chinese</system:String>
     <system:String x:Key="DeveloperLanguageTraditional">Traditional Chinese (Hong Kong)</system:String>
     <system:String x:Key="DeveloperLanguageEnglish">English</system:String>
+    <system:String x:Key="DeveloperLanguageJapanese">Japanese</system:String>
     <system:String x:Key="DeveloperPresetCompact">Compact 1280×700</system:String>
     <system:String x:Key="DeveloperPresetDefault">Default 1540×900</system:String>
     <system:String x:Key="DeveloperPresetMaximize">Maximize</system:String>
