@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.Text.Json;
 using System.Windows;
+using System.Windows.Markup;
 
 namespace IPhoneMirror.DriverInstaller.Services;
 
@@ -9,6 +10,7 @@ internal static class DriverLocalization
     internal const string Chinese = "zh-CN";
     internal const string TraditionalChineseHongKong = "zh-HK";
     internal const string English = "en-US";
+    internal const string Japanese = "ja-JP";
     private static readonly string SettingsPath = Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
         "iPhoneMirror", "settings.json");
@@ -32,6 +34,17 @@ internal static class DriverLocalization
 
     internal static string Format(string key, params object?[] arguments) =>
         string.Format(Culture, Get(key), arguments);
+
+    internal static void ApplyWindowLanguage()
+    {
+        var language = XmlLanguage.GetLanguage(Culture.IetfLanguageTag);
+        EventManager.RegisterClassHandler(typeof(Window), FrameworkElement.LoadedEvent,
+            new RoutedEventHandler((sender, _) =>
+            {
+                if (sender is Window window && !Equals(window.Language, language))
+                    window.Language = language;
+            }));
+    }
 
     internal static ResourceDictionary CreateDictionary() => new()
     {
@@ -63,6 +76,8 @@ internal static class DriverLocalization
             return Chinese;
         if (value is not null && IsTraditionalChinese(value))
             return TraditionalChineseHongKong;
+        if (value is not null && value.StartsWith("ja", StringComparison.OrdinalIgnoreCase))
+            return Japanese;
         return string.Equals(value, English, StringComparison.OrdinalIgnoreCase)
             ? English
             : ResolveSystemLanguage();
@@ -75,6 +90,8 @@ internal static class DriverLocalization
     {
         if (IsTraditionalChinese(cultureName))
             return TraditionalChineseHongKong;
+        if (cultureName.StartsWith("ja", StringComparison.OrdinalIgnoreCase))
+            return Japanese;
         return cultureName.StartsWith("zh", StringComparison.OrdinalIgnoreCase)
             ? Chinese : English;
     }
