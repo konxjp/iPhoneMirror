@@ -26,9 +26,10 @@ public partial class StartupErrorWindow : Wpf.Ui.Controls.FluentWindow
             language.Equals("zh-Hant-HK", StringComparison.OrdinalIgnoreCase) ||
             language.Equals("zh-MO", StringComparison.OrdinalIgnoreCase);
         var chinese = language.StartsWith("zh", StringComparison.OrdinalIgnoreCase);
+        var japanese = language.StartsWith("ja", StringComparison.OrdinalIgnoreCase);
         HeadingText.Text = LocalizationService.Get("StartupErrorHeading");
         SummaryText.Text = StartupDiagnostics.UserMessage(error,
-            hongKong ? "zh-HK" : chinese ? "zh-CN" : "en-US");
+            hongKong ? "zh-HK" : chinese ? "zh-CN" : japanese ? "ja-JP" : "en-US");
         LogLabelText.Text = LocalizationService.Get("StartupErrorLogLabel");
         LogPathTextBox.Text = logPath;
         DetailsExpander.Header = LocalizationService.Get("StartupErrorDetails");
