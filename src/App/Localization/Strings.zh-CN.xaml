@@ -8,6 +8,7 @@
     <system:String x:Key="LanguageChinese">简体中文</system:String>
     <system:String x:Key="LanguageTraditionalChineseHongKong">繁體中文（香港）</system:String>
     <system:String x:Key="LanguageEnglish">English</system:String>
+    <system:String x:Key="LanguageJapanese">日本語</system:String>
     <system:String x:Key="LanguageToolTip">界面语言</system:String>
     <system:String x:Key="DriverManagerButton">驱动管理器</system:String>
     <system:String x:Key="DriverManagerToolTip">打开驱动安装、修复与卸载工具</system:String>
@@ -906,6 +907,7 @@
     <system:String x:Key="DeveloperLanguageSimplified">简体中文</system:String>
     <system:String x:Key="DeveloperLanguageTraditional">繁体中文（香港）</system:String>
     <system:String x:Key="DeveloperLanguageEnglish">English</system:String>
+    <system:String x:Key="DeveloperLanguageJapanese">日语</system:String>
     <system:String x:Key="DeveloperPresetCompact">紧凑 1280×700</system:String>
     <system:String x:Key="DeveloperPresetDefault">默认 1540×900</system:String>
     <system:String x:Key="DeveloperPresetMaximize">最大化</system:String>
