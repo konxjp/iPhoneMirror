@@ -30,7 +30,7 @@
     <PublishTrimmed>false</PublishTrimmed>
     <!-- Keep the framework resource satellites used by the supported UI
          cultures in addition to the neutral English fallback. -->
-    <SatelliteResourceLanguages>en;zh-Hans;zh-Hant</SatelliteResourceLanguages>
+    <SatelliteResourceLanguages>en;ja;zh-Hans;zh-Hant</SatelliteResourceLanguages>
   </PropertyGroup>
 
   <ItemGroup>
