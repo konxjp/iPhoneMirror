@@ -7,6 +7,8 @@ $Exe = Join-Path $Root 'outputs\iPhoneMirror\iPhoneMirror.exe'
 $Output = Join-Path $Root 'outputs\diagnostics'
 $HongKongResourcePath = Join-Path $Root `
     'src\App\Localization\Strings.zh-HK.xaml'
+$JapaneseResourcePath = Join-Path $Root `
+    'src\App\Localization\Strings.ja-JP.xaml'
 
 $hongKongResources = [xml](Get-Content -Raw -LiteralPath `
     $HongKongResourcePath -Encoding utf8)
@@ -17,6 +19,12 @@ $xamlNamespaces.AddNamespace('x',
 $expectedHongKongTitle = $hongKongResources.SelectSingleNode(
     '//*[@x:Key="WindowTitleConnectivity"]', $xamlNamespaces).InnerText
 $expectedHongKongStart = $hongKongResources.SelectSingleNode(
+    '//*[@x:Key="StartMirroring"]', $xamlNamespaces).InnerText
+$japaneseResources = [xml](Get-Content -Raw -LiteralPath `
+    $JapaneseResourcePath -Encoding utf8)
+$expectedJapaneseTitle = $japaneseResources.SelectSingleNode(
+    '//*[@x:Key="WindowTitleConnectivity"]', $xamlNamespaces).InnerText
+$expectedJapaneseStart = $japaneseResources.SelectSingleNode(
     '//*[@x:Key="StartMirroring"]', $xamlNamespaces).InnerText
 
 Add-Type -AssemblyName UIAutomationClient
@@ -142,6 +150,13 @@ try {
     $hongKongImage = Join-Path $Output 'ui-monochrome-zh-HK.png'
     Save-Window $process.MainWindowHandle $hongKongImage
 
+    Select-Index $language 4
+    $process.Refresh()
+    $japaneseTitle = $process.MainWindowTitle
+    $japaneseStart = (Find-ById $window 'CaptureActionButton').Current.Name
+    $japaneseImage = Join-Path $Output 'ui-monochrome-ja-JP.png'
+    Save-Window $process.MainWindowHandle $japaneseImage
+
     Select-Index $language 1
     $process.Refresh()
     $chineseTitle = $process.MainWindowTitle
@@ -162,6 +177,10 @@ try {
         $hongKongStart -ne $expectedHongKongStart) {
         throw "Hong Kong Chinese switch failed: title='$hongKongTitle', start='$hongKongStart'"
     }
+    if ($japaneseTitle -ne $expectedJapaneseTitle -or
+        $japaneseStart -ne $expectedJapaneseStart) {
+        throw "Japanese switch failed: title='$japaneseTitle', start='$japaneseStart'"
+    }
 
     [pscustomobject]@{
         EnglishTitle = $englishTitle
@@ -170,9 +189,12 @@ try {
         ChineseStart = $chineseStart
         HongKongTitle = $hongKongTitle
         HongKongStart = $hongKongStart
+        JapaneseTitle = $japaneseTitle
+        JapaneseStart = $japaneseStart
         EnglishScreenshot = $englishImage
         ChineseScreenshot = $chineseImage
         HongKongScreenshot = $hongKongImage
+        JapaneseScreenshot = $japaneseImage
     }
 }
 finally {
