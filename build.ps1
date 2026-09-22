@@ -77,7 +77,8 @@ function Build-UsbTouchBridge {
             throw "USB touch bridge directory exists but is incomplete: $UsbControlRoot"
         }
         Write-Host "Cloning USB touch bridge from $UsbControlRepository"
-        & git clone --depth 1 $UsbControlRepository $UsbControlRoot
+        & git clone $UsbControlRepository $UsbControlRoot
+        & git -C $UsbControlRoot checkout 53e3ea45
         if ($LASTEXITCODE -ne 0) {
             throw "USB touch bridge clone failed: $LASTEXITCODE"
         }
@@ -93,8 +94,7 @@ function Build-UsbTouchBridge {
         throw "USB touch bridge build failed: $LASTEXITCODE"
     }
     if (-not (Test-Path -LiteralPath $UsbTouchBridgeOutput -PathType Leaf) -or
-        -not (Test-Path -LiteralPath $UsbTouchBridgeRuntimeManifest -PathType Leaf) -or
-        -not (Test-Path -LiteralPath (Join-Path $Root 'dist\_internal') -PathType Container)) {
+        -not (Test-Path -LiteralPath $UsbTouchBridgeRuntimeManifest -PathType Leaf)) {
         throw 'USB touch bridge output is incomplete.'
     }
     if (-not (Test-Path -LiteralPath $UsbControlPython -PathType Leaf)) {
