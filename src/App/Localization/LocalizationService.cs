@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.IO;
 using System.Windows;
+using System.Windows.Markup;
 using IPhoneMirror.App.Services;
 using IPhoneMirror.App.Updater;
 
@@ -12,6 +13,7 @@ internal static class LocalizationService
     internal const string SimplifiedChinese = "zh-CN";
     internal const string TraditionalChineseHongKong = "zh-HK";
     internal const string English = "en-US";
+    internal const string Japanese = "ja-JP";
 
     private const string DictionaryPrefix = "Localization/Strings.";
     private static readonly string SettingsPath = Path.Combine(
@@ -19,6 +21,7 @@ internal static class LocalizationService
         "iPhoneMirror", "settings.json");
 
     private static string _selectedLanguage = SystemLanguage;
+    private static bool _windowLanguageHandlerRegistered;
     private static CultureInfo _effectiveCulture = CultureInfo.GetCultureInfo(English);
 
     internal static event EventHandler? LanguageChanged;
@@ -53,7 +56,7 @@ internal static class LocalizationService
     private static void ApplyLanguage(string language, bool persist, bool notify)
     {
         if (language is not (SystemLanguage or SimplifiedChinese or
-            TraditionalChineseHongKong or English))
+            TraditionalChineseHongKong or English or Japanese))
             language = SystemLanguage;
 
         var cultureName = language == SystemLanguage
@@ -94,8 +97,32 @@ internal static class LocalizationService
         CultureInfo.DefaultThreadCurrentCulture = culture;
         CultureInfo.DefaultThreadCurrentUICulture = culture;
 
+        ApplyWindowLanguage(application, culture);
+
         if (persist) SaveLanguage(language);
         if (notify) LanguageChanged?.Invoke(null, EventArgs.Empty);
+    }
+
+    private static void ApplyWindowLanguage(Application? application, CultureInfo culture)
+    {
+        if (application is null) return;
+        if (!_windowLanguageHandlerRegistered)
+        {
+            EventManager.RegisterClassHandler(typeof(Window), FrameworkElement.LoadedEvent,
+                new RoutedEventHandler(static (sender, _) =>
+                {
+                    if (sender is Window window) SetWindowLanguage(window, _effectiveCulture);
+                }));
+            _windowLanguageHandlerRegistered = true;
+        }
+        foreach (Window window in application.Windows)
+            SetWindowLanguage(window, culture);
+    }
+
+    private static void SetWindowLanguage(Window window, CultureInfo culture)
+    {
+        var language = XmlLanguage.GetLanguage(culture.IetfLanguageTag);
+        if (!Equals(window.Language, language)) window.Language = language;
     }
 
     private static string ResolveSystemCulture() =>
@@ -105,6 +132,8 @@ internal static class LocalizationService
     {
         if (IsHongKongTraditionalChinese(cultureName))
             return TraditionalChineseHongKong;
+        if (cultureName.StartsWith("ja", StringComparison.OrdinalIgnoreCase))
+            return Japanese;
         return cultureName.StartsWith("zh", StringComparison.OrdinalIgnoreCase)
             ? SimplifiedChinese
             : English;
