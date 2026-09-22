@@ -9,7 +9,7 @@
   Direct USB capture and wireless AirPlay reception in one application.
 </p>
 
-<p align="center"><a href="README.md">简体中文</a> · <strong>English</strong></p>
+<p align="center"><a href="README.md">简体中文</a> · <strong>English</strong> · <a href="README.ja.md">日本語</a></p>
 
 <p align="center">
   <a href="https://github.com/RayrenSX/iPhoneMirror/releases"><img alt="GitHub Release" src="https://img.shields.io/github/v/release/RayrenSX/iPhoneMirror?include_prereleases&sort=semver"></a>
@@ -164,7 +164,7 @@ AirPlay implementation may require updates for future iOS releases.
 | OBS | Clean per-device detached window for Window Capture |
 | Bluetooth control | Per-device BLE HID mouse/keyboard binding, system navigation, and configurable global shortcuts |
 | Image adjustments | Preview-only brightness, contrast, saturation, and gamma |
-| Tools | Screenshot, force refresh, shortcuts, live logs, Simplified Chinese, Traditional Chinese (Hong Kong), and English UI |
+| Tools | Screenshot, force refresh, shortcuts, live logs, Simplified Chinese, Traditional Chinese (Hong Kong), English, and Japanese UI |
 | Driver | Strict per-device check before wired capture; opens the standalone driver manager on failure |
 
 Resolution and FPS options cap local presentation only; they do not reduce the
