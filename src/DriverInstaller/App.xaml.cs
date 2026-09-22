@@ -86,6 +86,7 @@ public partial class App : Application
         base.OnStartup(e);
         DriverLocalization.Initialize(e.Args);
         Resources.MergedDictionaries.Insert(0, DriverLocalization.CreateDictionary());
+        DriverLocalization.ApplyWindowLanguage();
         DriverThemeService.Initialize(e.Args);
         EventManager.RegisterClassHandler(typeof(Window), FrameworkElement.LoadedEvent,
             new RoutedEventHandler((sender, _) =>
