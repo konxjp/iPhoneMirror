@@ -115,6 +115,7 @@ internal static class StartupDiagnostics
             language.Equals("zh-MO", StringComparison.OrdinalIgnoreCase);
         var simplifiedChinese = language.Equals("zh-CN",
             StringComparison.OrdinalIgnoreCase);
+        var japanese = language.StartsWith("ja", StringComparison.OrdinalIgnoreCase);
         var nativeLoadFailure = Find(error, static candidate =>
             candidate is DllNotFoundException or BadImageFormatException or
                 FileNotFoundException);
@@ -122,12 +123,16 @@ internal static class StartupDiagnostics
         {
             if (hongKong)
                 return "無法載入應用程式所需的原生元件。請重新安裝最新的完整安裝程式；詳細診斷資料已寫入下方記錄。";
+            if (japanese)
+                return "アプリに必要なネイティブコンポーネントを読み込めませんでした。最新の完全版 Setup インストーラーで再インストールしてください。詳細な診断情報は下記のログに記録されています。";
             return simplifiedChinese
                 ? "无法加载程序所需的原生组件。请重新安装最新的完整安装包；详细诊断已写入下方日志。"
                 : "A required native component could not be loaded. Reinstall the latest full Setup package; detailed diagnostics were written to the log below.";
         }
         if (hongKong)
             return "iPhoneMirror 啟動時發生錯誤。詳細診斷資料已寫入下方記錄。";
+        if (japanese)
+            return "iPhoneMirror の起動中にエラーが発生しました。詳細な診断情報は下記のログに記録されています。";
         return simplifiedChinese
             ? "iPhoneMirror 启动时遇到错误。详细诊断已写入下方日志。"
             : "iPhoneMirror encountered an error during startup. Detailed diagnostics were written to the log below.";
