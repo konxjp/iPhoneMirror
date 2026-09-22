@@ -511,6 +511,13 @@ internal static class Program
             !font.Source.Equals("Microsoft JhengHei UI", StringComparison.OrdinalIgnoreCase))
             throw new InvalidOperationException(
                 "Hong Kong localization dictionary did not load at runtime.");
+        applyLanguage.Invoke(null, ["ja-JP", false, false]);
+        if (application.TryFindResource("StartMirroring") is not string japaneseStart ||
+            !japaneseStart.Contains("ミラーリング", StringComparison.Ordinal) ||
+            application.TryFindResource("NavigationTextFontFamily") is not FontFamily japaneseFont ||
+            !japaneseFont.Source.Equals("Yu Gothic UI", StringComparison.OrdinalIgnoreCase))
+            throw new InvalidOperationException(
+                "Japanese localization dictionary did not load at runtime.");
         applyLanguage.Invoke(null, ["system", false, false]);
     }
 
