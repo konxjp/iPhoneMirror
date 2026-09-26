@@ -62,10 +62,8 @@ if (-not (Test-Path -LiteralPath $UsbTouchBridgeRuntimeTools -PathType Leaf)) {
 . $UsbTouchBridgeRuntimeTools
 
 function Build-UsbTouchBridge {
-    # CI checkouts contain only iPhoneMirror. Fetch the maintained bridge
-    # project into the sibling path used by local development when needed.
     if (-not (Test-Path -LiteralPath $UsbControlBuild -PathType Leaf) -or
-        -not (Test-Path -LiteralPath $UsbControlSource -PathType Leaf)) {
+        -not (Test-Path -LiteralPath $UsbControlBuild.Replace('build.ps1', 'Cargo.toml') -PathType Leaf)) {
         if (-not [string]::IsNullOrWhiteSpace($env:IPHONE_MIRROR_USB_BRIDGE_ROOT)) {
             throw "USB touch bridge source is incomplete: $UsbControlRoot"
         }
@@ -77,53 +75,38 @@ function Build-UsbTouchBridge {
             throw "USB touch bridge directory exists but is incomplete: $UsbControlRoot"
         }
         Write-Host "Cloning USB touch bridge from $UsbControlRepository"
-        & git clone $UsbControlRepository $UsbControlRoot
-        & git -C $UsbControlRoot checkout 53e3ea45
+        & git clone --depth 1 $UsbControlRepository $UsbControlRoot
+        & git -C $UsbControlRoot submodule update --init --recursive
         if ($LASTEXITCODE -ne 0) {
             throw "USB touch bridge clone failed: $LASTEXITCODE"
         }
     }
-    foreach ($required in @($UsbControlBuild, $UsbControlSource)) {
-        if (-not (Test-Path -LiteralPath $required -PathType Leaf)) {
-            throw "USB touch bridge build input is missing: $required"
-        }
-    }
 
-    & $UsbControlBuild -EnvironmentPath $UsbControlEnvironment `
-        -BridgeOutputPath $UsbTouchBridgeOutput
+    Write-Host "Building USB touch bridge (Rust)"
+    $cargoArgs = @('build', '--release', '--manifest-path', (Join-Path $UsbControlRoot 'Cargo.toml'))
+    & cargo @cargoArgs
     if ($LASTEXITCODE -ne 0) {
-        throw "USB touch bridge build failed: $LASTEXITCODE"
+        throw "USB touch bridge Rust build failed: $LASTEXITCODE"
     }
-    if (-not (Test-Path -LiteralPath $UsbTouchBridgeOutput -PathType Leaf) -or
-        -not (Test-Path -LiteralPath $UsbTouchBridgeRuntimeManifest -PathType Leaf)) {
-        throw 'USB touch bridge output is incomplete.'
-    }
-    if (-not (Test-Path -LiteralPath $UsbControlPython -PathType Leaf)) {
-        throw "USB touch bridge Python environment is missing: $UsbControlPython"
-    }
-    Assert-UsbTouchBridgeRuntime -Directory (Join-Path $Root 'dist') `
-        -Label 'Built USB touch bridge'
 
-    # Exercise the packaged executable before it becomes application content.
-    # The bridge help includes localized text. Run it with file-backed UTF-8
-    # redirection so runner console encoding cannot affect the smoke test.
-    $helpOutput = Join-Path $Root 'work\iUsbBridge-help.txt'
-    $helpError = Join-Path $Root 'work\iUsbBridge-help.err.txt'
-    New-Item -ItemType Directory -Force -Path (Split-Path -Parent $helpOutput) | Out-Null
-    $previousPythonIoEncoding = $env:PYTHONIOENCODING
-    try {
-        $env:PYTHONIOENCODING = 'utf-8'
-        $helpProcess = Start-Process -FilePath $UsbTouchBridgeOutput -ArgumentList '--help' `
-            -Wait -PassThru -NoNewWindow -RedirectStandardOutput $helpOutput `
-            -RedirectStandardError $helpError
-        # Some localized bridge builds return 1 after printing help. The
-        # manifest/hash validation above is the release gate, so keep this
-        # optional probe silent and non-blocking.
+    $builtExe = Join-Path $UsbControlRoot 'target\release\iphone-mirror-idevice-bridge.exe'
+    if (-not (Test-Path -LiteralPath $builtExe -PathType Leaf)) {
+        throw "USB touch bridge exe not found: $builtExe"
     }
-    finally {
-        $env:PYTHONIOENCODING = $previousPythonIoEncoding
-        Remove-Item -LiteralPath $helpOutput, $helpError -Force -ErrorAction SilentlyContinue
-    }
+
+    $distDir = Join-Path $Root 'dist'
+    New-Item -ItemType Directory -Force -Path $distDir | Out-Null
+    Copy-Item -LiteralPath $builtExe -Destination $UsbTouchBridgeOutput -Force
+
+    $hash = (Get-FileHash -LiteralPath $UsbTouchBridgeOutput -Algorithm SHA256).Hash.ToLowerInvariant()
+    $runtimeJson = [ordered]@{
+        schema = 2
+        files  = @([ordered]@{ path = 'iUsbBridge.exe'; sha256 = $hash })
+    } | ConvertTo-Json -Depth 5
+    [IO.File]::WriteAllText($UsbTouchBridgeRuntimeManifest, $runtimeJson)
+
+    Write-Host "iUsbBridge: $UsbTouchBridgeOutput"
+    Write-Host "SHA-256: $hash"
 }
 
 $CMake = 'C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe'
