@@ -483,7 +483,6 @@ try {
             Join-Path 'Wireless\UxPlay' $_
         })
         $bridgeToolsRoot = Join-Path $PublishRoot 'tools'
-            -Label 'Published USB touch bridge runtime'
         $bridgeRuntimeArtifacts = @(Get-UsbTouchBridgeRuntimePayloadFiles `
             -Directory $bridgeToolsRoot -TargetDirectory 'tools')
         $requiredArtifacts += $bridgeRuntimeArtifacts
@@ -683,7 +682,6 @@ try {
                 $InstallerPublishRoot | Out-Host
         }
         $installerBridgeToolsRoot = Join-Path $InstallerPublishRoot 'tools'
-            -Label 'Shared-runtime installer USB touch bridge runtime'
         $installerBridgeRuntimeArtifacts = @(Get-UsbTouchBridgeRuntimePayloadFiles `
             -Directory $installerBridgeToolsRoot -TargetDirectory 'tools')
         $installerRequiredArtifacts = @(
