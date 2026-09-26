@@ -89,7 +89,8 @@ function Build-UsbTouchBridge {
         }
     }
 
-    & $UsbControlBuild -BridgeOutputPath $UsbTouchBridgeOutput
+    & $UsbControlBuild -EnvironmentPath $UsbControlEnvironment `
+        -BridgeOutputPath $UsbTouchBridgeOutput
     if ($LASTEXITCODE -ne 0) {
         throw "USB touch bridge build failed: $LASTEXITCODE"
     }
