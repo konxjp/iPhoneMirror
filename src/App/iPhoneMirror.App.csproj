@@ -41,13 +41,16 @@
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
     </Content>
+    <Content Include="..\..\dist\iUsbBridge.runtime.json">
+      <Link>tools\iUsbBridge.runtime.json</Link>
+      <TargetPath>tools\iUsbBridge.runtime.json</TargetPath>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
     </Content>
-    <Content Include="..\..\dist\iUsbBridge.runtime.json">
-      <Link>tools\iUsbBridge.runtime.json</Link>
-      <TargetPath>tools\iUsbBridge.runtime.json</TargetPath>
+    <Content Include="..\..\tools\ddi\Xcode_iOS_DDI_Personalized\**\*">
+      <Link>tools\ddi\Xcode_iOS_DDI_Personalized\%(RecursiveDir)%(Filename)%(Extension)</Link>
+      <TargetPath>tools\ddi\Xcode_iOS_DDI_Personalized\%(RecursiveDir)%(Filename)%(Extension)</TargetPath>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
@@ -59,6 +62,7 @@
   <Target Name="ValidateUsbTouchBridgePayload" BeforeTargets="PrepareForBuild">
     <Error Condition="!Exists('..\..\dist\iUsbBridge.exe')"
            Text="iUsbBridge.exe is missing. Run build.ps1 so the self-developed USB bridge is built first." />
+    <Error Condition="!Exists('..\..\dist\_internal')"
            Text="UsbTouchBridge runtime directory is missing. Run build.ps1 so the self-developed USB bridge is built first." />
     <Error Condition="!Exists('..\..\dist\iUsbBridge.runtime.json')"
            Text="iUsbBridge runtime manifest is missing. Run build.ps1 so the self-developed USB bridge is built first." />
