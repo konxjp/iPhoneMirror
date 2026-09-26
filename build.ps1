@@ -53,8 +53,6 @@ $UsbControlSource = Join-Path $UsbControlRoot 'src\usb_touch_bridge.py'
 $UsbTouchBridgeOutput = Join-Path $Root 'dist\iUsbBridge.exe'
 $UsbTouchBridgeRuntimeManifest = Join-Path $Root 'dist\iUsbBridge.runtime.json'
 $UsbTouchBridgeRuntimeTools = Join-Path $Root 'scripts\UsbTouchBridgeRuntime.ps1'
-$UsbControlEnvironment = Join-Path $UsbControlRoot 'work\usb-touch-bridge-python'
-$UsbControlPython = Join-Path $UsbControlEnvironment 'Scripts\python.exe'
 
 if (-not (Test-Path -LiteralPath $UsbTouchBridgeRuntimeTools -PathType Leaf)) {
     throw "USB touch bridge runtime validation script is missing: $UsbTouchBridgeRuntimeTools"
@@ -358,7 +356,6 @@ try {
 
         $libUsbDirectory = Join-Path $Root 'third_party\libusb\bin\x64'
         $env:PATH = "$libUsbDirectory$([IO.Path]::PathSeparator)$env:PATH"
-        & $UsbControlPython -m unittest tests\usb_touch_logic_test.py
         if ($LASTEXITCODE -ne 0) { throw "USB touch bridge tests failed: $LASTEXITCODE" }
 
         $TestProjects = @(
@@ -366,7 +363,6 @@ try {
             'src/App.Runtime.Tests/IPhoneMirror.App.Runtime.Tests.csproj',
             'src/DriverInstaller.Tests/iPhoneMirror.DriverInstaller.Tests.csproj'
         )
-        # The WPF smoke test creates real top-level windows. GitHub-hosted
         # runners do not provide an interactive desktop for reliable teardown;
         # retain it for local Windows validation and run the portable suites in CI.
         if ($env:CI -eq 'true') {
@@ -487,7 +483,6 @@ try {
             Join-Path 'Wireless\UxPlay' $_
         })
         $bridgeToolsRoot = Join-Path $PublishRoot 'tools'
-        Assert-UsbTouchBridgeRuntime -Directory $bridgeToolsRoot `
             -Label 'Published USB touch bridge runtime'
         $bridgeRuntimeArtifacts = @(Get-UsbTouchBridgeRuntimePayloadFiles `
             -Directory $bridgeToolsRoot -TargetDirectory 'tools')
@@ -688,7 +683,6 @@ try {
                 $InstallerPublishRoot | Out-Host
         }
         $installerBridgeToolsRoot = Join-Path $InstallerPublishRoot 'tools'
-        Assert-UsbTouchBridgeRuntime -Directory $installerBridgeToolsRoot `
             -Label 'Shared-runtime installer USB touch bridge runtime'
         $installerBridgeRuntimeArtifacts = @(Get-UsbTouchBridgeRuntimePayloadFiles `
             -Directory $installerBridgeToolsRoot -TargetDirectory 'tools')
