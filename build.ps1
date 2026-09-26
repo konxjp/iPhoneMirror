@@ -75,8 +75,7 @@ function Build-UsbTouchBridge {
             throw "USB touch bridge directory exists but is incomplete: $UsbControlRoot"
         }
         Write-Host "Cloning USB touch bridge from $UsbControlRepository"
-        & git clone --depth 1 $UsbControlRepository $UsbControlRoot
-        & git -C $UsbControlRoot submodule update --init --recursive
+        & git clone --recurse-submodules $UsbControlRepository $UsbControlRoot
         if ($LASTEXITCODE -ne 0) {
             throw "USB touch bridge clone failed: $LASTEXITCODE"
         }
