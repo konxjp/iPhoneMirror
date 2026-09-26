@@ -64,6 +64,12 @@ jobs:
         shell: pwsh
         run: ./scripts/verify_localization.ps1
 
+      - name: Clone iUsbBridge with submodules
+        shell: pwsh
+        run: |
+          git clone https://github.com/RayrenSX/iUsbBridge.git ..\iUsbBridge
+          git -C ..\iUsbBridge submodule update --init --recursive
+
       - name: Build Release, run tests, and publish Windows x64 output
         shell: pwsh
         run: ./build.ps1 -Configuration Release
@@ -75,3 +81,4 @@ jobs:
           name: iPhoneMirror-ja-JP
           path: outputs/iPhoneMirror
           retention-days: 7
+
